@@ -1,0 +1,14 @@
+name: LinksOnSigns
+main: de.tobiyas.linksonsigns.LinksOnSigns
+version: 0.11
+website: http://
+author: tobiyas
+description: >
+             sends link urls to persons clicking on the sign
+
+commands:
+  linksign:
+    description: links a sign to an URL
+    aliases: [lsign]
+    usage: |
+           /linksign <link-name> [URL]
