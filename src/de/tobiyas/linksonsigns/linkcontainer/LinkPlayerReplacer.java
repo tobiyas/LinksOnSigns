@@ -1,6 +1,5 @@
 package de.tobiyas.linksonsigns.linkcontainer;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -54,8 +53,8 @@ public class LinkPlayerReplacer {
 			plugin.getLinkController().addLinkContainer(linkName, url);
 		}
 		
-		sign.setLine(0, ChatColor.BLUE + "[URL]");
-		sign.setLine(3, ChatColor.RED + "klick me");
+		sign.setLine(0, plugin.interactConfig().getconfig_line0());
+		sign.setLine(3, plugin.interactConfig().getconfig_line3());
 		
 		int stringLength = linkName.length();
 		

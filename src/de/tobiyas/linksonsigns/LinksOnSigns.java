@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import de.tobiyas.linksonsigns.commands.CommandExecutor_LinkSign;
+import de.tobiyas.linksonsigns.configuration.Config;
 import de.tobiyas.linksonsigns.linkcontainer.LinkController;
 import de.tobiyas.linksonsigns.listeners.Listener_Block;
 import de.tobiyas.linksonsigns.listeners.Listener_Player;
@@ -28,6 +29,8 @@ public class LinksOnSigns extends JavaPlugin{
 	private PermissionManager permissionManager;
 
 	private String prefix;
+	
+	private Config config;
 
 	
 	@Override
@@ -41,6 +44,8 @@ public class LinksOnSigns extends JavaPlugin{
 	
 		linkController = new LinkController();
 		permissionManager = new PermissionManager();
+		
+		config = new Config();
 
 		registerEvents();
 		registerCommands();
@@ -78,5 +83,8 @@ public class LinksOnSigns extends JavaPlugin{
 		return permissionManager;
 	}
 	
+	public Config interactConfig(){
+		return config;
+	}
 
 }

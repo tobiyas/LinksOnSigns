@@ -98,7 +98,7 @@ public class Listener_Player implements Listener {
 	}
 	
 	private boolean isFreeLinkSign(Sign sign){
-		return sign.getLine(0).toLowerCase().contains("newurl");
+		return sign.getLine(0).toLowerCase().contains(plugin.interactConfig().getconfig_replaceID());
 	}
 
 

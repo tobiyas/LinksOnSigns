@@ -39,7 +39,7 @@ public class Listener_Block implements Listener {
 	}
 	
 	private boolean checkIfLinkSign(String line){
-		return line.equals(ChatColor.BLUE + "[URL]");
+		return line.equals(plugin.interactConfig().getconfig_line0());
 	}
 
 
