@@ -1,7 +1,7 @@
 name: LinksOnSigns
 main: de.tobiyas.linksonsigns.LinksOnSigns
-version: 0.11
-website: http://
+version: 1.2
+website: http://dev.bukkit.org/server-mods/linksonsigns/
 author: tobiyas
 description: >
              sends link urls to persons clicking on the sign

@@ -49,30 +49,41 @@ public class Listener_Player implements Listener {
 			else
 				if(checkLinkSignCreation(player, block)){
 					event.setCancelled(true);
+					return;
 				}
-			return;
+			if(!plugin.interactConfig().getconfig_alsoTriggerOnPunch())
+				return;
 		}
 		
 		if(!(isLinkSign(sign))) return;
 		
+		if(player.getItemInHand().getType().equals(Material.APPLE)) return;
+		
 		event.setCancelled(true);
-		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.read.getNode())){
-			player.sendMessage(ChatColor.RED + "You dont have Permission.");
-			return;
-		}
+		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.read.getNode())) return;
 		
 		if(plugin.getLinkController().getSpamController().isOnSpamList(player)) return;
 		String url = getUrlFromSign(sign);
 		if(url.equals("")) return;
 		
 		event.getPlayer().sendMessage(ChatColor.BLUE + "" + ChatColor.UNDERLINE + url);
-		event.getPlayer().sendMessage(ChatColor.DARK_GREEN + "Please open your Chat and click on the Link.");
+		event.getPlayer().sendMessage(plugin.interactConfig().getconfig_displayTriggerMessage());
 		
 		plugin.getLinkController().getSpamController().addToSpamList(player);
 	}
 	
 	private boolean isLinkSign(Sign sign){
-		return sign.getLine(0).equals(ChatColor.BLUE + "[URL]");
+		String line0 = sign.getLine(0);
+		line0 = stripColor(line0);
+		
+		String checkString  = plugin.interactConfig().getconfig_line0();
+		checkString = stripColor(checkString);
+		
+		return line0.contains(checkString);
+	}
+	
+	private String stripColor(String message){
+		return message.replaceAll("(§([a-f0-9]))", "");
 	}
 	
 	private String getUrlFromSign(Sign sign){

@@ -8,8 +8,7 @@
  package de.tobiyas.linksonsigns.configuration;
 
  
- import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
+ import org.bukkit.configuration.file.FileConfiguration;
 
 import de.tobiyas.linksonsigns.LinksOnSigns;
 
@@ -20,6 +19,9 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 	private String config_line0;
 	private String config_line3;
 	private String config_replaceID;
+	private boolean config_alsoTriggerOnPunch;
+	
+	private String config_displayTriggerMessage;
 
 
 	public Config(){
@@ -32,9 +34,12 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		FileConfiguration config = plugin.getConfig();
 		config.options().header("CONFIG: stdLINE0, stdLINE3");
 
-		config.addDefault("stdLINE0", ChatColor.BLUE + "[URL]");
-		config.addDefault("stdLINE3", ChatColor.RED + "click me");
+		config.addDefault("stdLINE0", "&9[URL]");
+		config.addDefault("stdLINE3", "&cclick me");
 		config.addDefault("preReplaceIdentifier", "newurl");
+		config.addDefault("displayTriggerMessage", "&5Please click the link above.");
+		
+		config.addDefault("alsoTriggerOnPunch", true);
 
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -46,27 +51,37 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 
-		config_line0 = decodeColor(config.getString("stdLINE0" ,ChatColor.BLUE + "[URL]"));
-		config_line3 = decodeColor(config.getString("stdLINE3" ,ChatColor.RED + "click me"));
+		config_line0 = config.getString("stdLINE0" , "&9[URL]");
+		config_line3 = config.getString("stdLINE3" , "&cclick me");
 		config_replaceID = config.getString("preReplaceIdentifier", "newurl");
+		config_alsoTriggerOnPunch = config.getBoolean("alsoTriggerOnPunch", true);
+		config_displayTriggerMessage = config.getString("displayTriggerMessage", "&5Please click the link above.");
 
 	}
 	
 	private String decodeColor(String message){
-		return message.replaceAll("(§([a-f0-9]))", "&$2");
+		return message.replaceAll("(&([a-f0-9]))", "§$2");
 	}
 	
 	
 	public String getconfig_line0(){
-		return config_line0;
+		return decodeColor(config_line0);
 	}
 	
 	public String getconfig_line3(){
-		return config_line3;
+		return decodeColor(config_line3);
 	}
 	
 	public String getconfig_replaceID(){
 		return config_replaceID;
+	}
+	
+	public boolean getconfig_alsoTriggerOnPunch(){
+		return config_alsoTriggerOnPunch;
+	}
+	
+	public String getconfig_displayTriggerMessage(){
+		return decodeColor(config_displayTriggerMessage);
 	}
 
 }

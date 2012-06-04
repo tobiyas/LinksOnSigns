@@ -17,7 +17,7 @@ import de.tobiyas.linksonsigns.configuration.Config;
 import de.tobiyas.linksonsigns.linkcontainer.LinkController;
 import de.tobiyas.linksonsigns.listeners.Listener_Block;
 import de.tobiyas.linksonsigns.listeners.Listener_Player;
-import de.tobiyas.linksonsigns.permissions.PermissionManager;
+import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class LinksOnSigns extends JavaPlugin{
@@ -43,7 +43,7 @@ public class LinksOnSigns extends JavaPlugin{
 		log("loading "+description.getFullName());
 	
 		linkController = new LinkController();
-		permissionManager = new PermissionManager();
+		permissionManager = new PermissionManager(this);
 		
 		config = new Config();
 

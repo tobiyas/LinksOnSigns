@@ -48,19 +48,23 @@ public class CommandExecutor_LinkSign implements CommandExecutor {
 			player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with 'newurl' in first line) to save the link to this sign.");
 			return true;
 		}
+	
+		String url = args[args.length -1];
+		String recogString = args[0];
 		
 		if(args.length >= 2){
-			String url = "";
-			for(int i = 1; i < args.length; i++){
-				url += args[i];
+			recogString = "";
+			for(int i = 0; i < args.length - 1; i++){
+				recogString += args[i] + " ";
 			}
+			recogString = recogString.substring(0, recogString.length()-1);
 			
-			if(url == ""){
-				player.sendMessage(ChatColor.RED + args[0] + " could not be established.");
+			if(recogString == ""){
+				player.sendMessage(ChatColor.RED + args[0] + " No valid recognization String.");
 				return true;
 			}
 			
-			plugin.getLinkController().addPlayerSelection(player, args[0], url);
+			plugin.getLinkController().addPlayerSelection(player, recogString, url);
 			player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with 'newurl' in first line) to save the link to this sign.");
 			return true;
 		}
