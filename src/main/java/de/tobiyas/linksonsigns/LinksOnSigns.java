@@ -17,6 +17,7 @@ import de.tobiyas.linksonsigns.configuration.Config;
 import de.tobiyas.linksonsigns.linkcontainer.LinkController;
 import de.tobiyas.linksonsigns.listeners.Listener_Block;
 import de.tobiyas.linksonsigns.listeners.Listener_Player;
+import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
@@ -49,6 +50,8 @@ public class LinksOnSigns extends JavaPlugin{
 
 		registerEvents();
 		registerCommands();
+		
+		initMetrics();
 	}
 	
 	@Override
@@ -58,6 +61,10 @@ public class LinksOnSigns extends JavaPlugin{
 	}
 	public void log(String message){
 		log.info(prefix+message);
+	}
+	
+	private void initMetrics(){
+		SendMetrics.sendMetrics(this);
 	}
 
 
