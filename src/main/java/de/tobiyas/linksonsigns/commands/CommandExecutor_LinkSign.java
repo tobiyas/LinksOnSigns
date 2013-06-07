@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.linksonsigns.LinksOnSigns;
 import de.tobiyas.linksonsigns.permissions.PermissionNode;
+import de.tobiyas.linksonsigns.shortener.TinyUrlShortener;
 
 public class CommandExecutor_LinkSign implements CommandExecutor {
 
@@ -45,12 +46,20 @@ public class CommandExecutor_LinkSign implements CommandExecutor {
 				return true;
 			}
 			plugin.getLinkController().addPlayerSelection(player, args[0], url);
-			player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with 'newurl' in first line) to save the link to this sign.");
+			String replaceString = plugin.interactConfig().getconfig_replaceID();
+			player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with '" + replaceString + 
+					"' in first line) to save the link to this sign.");
+			
 			return true;
 		}
 	
 		String url = args[args.length -1];
 		String recogString = args[0];
+		boolean isShortened = plugin.interactConfig().isconfig_useTinyUrlShortener();
+		
+		if(isShortened){
+			url = TinyUrlShortener.shortenURL(url);
+		}
 		
 		if(args.length >= 2){
 			recogString = "";

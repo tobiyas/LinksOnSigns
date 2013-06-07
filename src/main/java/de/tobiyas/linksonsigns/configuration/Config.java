@@ -19,10 +19,16 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 	private String config_line0;
 	private String config_line3;
 	private String config_replaceID;
+	
 	private boolean config_alsoTriggerOnPunch;
+	
+	private boolean config_useTinyUrlShortener;
 	
 	private String config_displayTriggerMessage;
 
+	private boolean config_uploadErrorStackTraces;
+	
+	
 
 	public Config(){
 		this.plugin = LinksOnSigns.getPlugin();
@@ -38,9 +44,12 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		config.addDefault("stdLINE3", "&cclick me");
 		config.addDefault("preReplaceIdentifier", "newurl");
 		config.addDefault("displayTriggerMessage", "&5Please click the link above.");
+		config.addDefault("useTinyUrlShortener", false);
 		
 		config.addDefault("alsoTriggerOnPunch", true);
 
+		config.addDefault("uploadErrorStackTraces", false);
+		
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
 
@@ -55,8 +64,9 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		config_line3 = config.getString("stdLINE3" , "&cclick me");
 		config_replaceID = config.getString("preReplaceIdentifier", "newurl");
 		config_alsoTriggerOnPunch = config.getBoolean("alsoTriggerOnPunch", true);
+		config_useTinyUrlShortener = config.getBoolean("useTinyUrlShortener", false);
 		config_displayTriggerMessage = config.getString("displayTriggerMessage", "&5Please click the link above.");
-
+		config_uploadErrorStackTraces = config.getBoolean("uploadErrorStackTraces", false);
 	}
 	
 	private String decodeColor(String message){
@@ -84,4 +94,11 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		return decodeColor(config_displayTriggerMessage);
 	}
 
+	public boolean isconfig_useTinyUrlShortener() {
+		return config_useTinyUrlShortener;
+	}
+
+	public boolean isconfig_uploadErrorStackTraces(){
+		return config_uploadErrorStackTraces;
+	}
 }

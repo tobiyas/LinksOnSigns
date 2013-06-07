@@ -1,5 +1,6 @@
 package de.tobiyas.linksonsigns.linkcontainer;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -65,6 +66,19 @@ public class LinkPlayerReplacer {
 			sign.setLine(1, linkName);
 			sign.setLine(2, "");
 		}
+		
+		if(player.isOnline()){
+			boolean isShortened = plugin.interactConfig().isconfig_useTinyUrlShortener();
+			String message = ChatColor.GREEN + "The Sign has been linked ";
+			if(isShortened){
+				message += "and shortened ";
+			}
+			
+			message += "successfully.";
+			player.sendMessage(message);
+			
+		}
+		
 		sign.update();
 	}
 }

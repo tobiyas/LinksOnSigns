@@ -8,21 +8,22 @@
 package de.tobiyas.linksonsigns;
 
 
-import org.bukkit.plugin.java.JavaPlugin;
-import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import de.tobiyas.linksonsigns.commands.CommandExecutor_LinkSign;
 import de.tobiyas.linksonsigns.configuration.Config;
 import de.tobiyas.linksonsigns.linkcontainer.LinkController;
 import de.tobiyas.linksonsigns.listeners.Listener_Block;
 import de.tobiyas.linksonsigns.listeners.Listener_Player;
+import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class LinksOnSigns extends JavaPlugin{
-	private Logger log;
+	private DebugLogger debugLogger;
+	
 	private PluginDescriptionFile description;
 	private static LinksOnSigns plugin;
 	
@@ -36,7 +37,9 @@ public class LinksOnSigns extends JavaPlugin{
 	
 	@Override
 	public void onEnable(){
-		log = Logger.getLogger("Minecraft");
+		debugLogger = new DebugLogger(this);
+		debugLogger.setAlsoToPlugin(true);
+		
 		description = getDescription();
 		prefix = "["+description.getName()+"] ";
 		
@@ -48,6 +51,9 @@ public class LinksOnSigns extends JavaPlugin{
 		
 		config = new Config();
 
+		boolean enableUploads = config.isconfig_uploadErrorStackTraces();
+		debugLogger.enableUploads(enableUploads);
+		
 		registerEvents();
 		registerCommands();
 		
@@ -59,8 +65,14 @@ public class LinksOnSigns extends JavaPlugin{
 		log("disabled "+description.getFullName());
 
 	}
+	
 	public void log(String message){
-		log.info(prefix+message);
+		debugLogger.log(prefix+message);
+	}
+	
+	public void logStacktrace(Exception exp, String message){
+		debugLogger.logError(message);
+		debugLogger.logStackTrace(exp);
 	}
 	
 	private void initMetrics(){
