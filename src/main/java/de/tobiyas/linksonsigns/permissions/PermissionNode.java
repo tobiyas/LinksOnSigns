@@ -3,7 +3,8 @@ package de.tobiyas.linksonsigns.permissions;
 public enum PermissionNode {
 	
 	create("linksonsigns.create"),
-	read("linksonsigns.use");
+	read("linksonsigns.use"),
+	reload("linksonsigns.reload");
 	
 	private String node;
 	PermissionNode(String node){

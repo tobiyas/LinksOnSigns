@@ -1,5 +1,11 @@
 package de.tobiyas.linksonsigns.commands;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,9 +25,12 @@ public class CommandExecutor_LinkSign implements CommandExecutor {
 		plugin.getCommand("linksign").setExecutor(this);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] args) {
+		
+		
 		if(!(sender instanceof Player)){
 			sender.sendMessage("You have to be a player to use this command.");
 			return true;
@@ -36,16 +45,48 @@ public class CommandExecutor_LinkSign implements CommandExecutor {
 		
 		if(args.length == 0){
 			player.sendMessage(ChatColor.RED + "Wrong usage: /linksign <keyword> [URL]");
+			player.sendMessage(ChatColor.RED + "Or: /linksign <'key words'> [URL]");
 			return true;
 		}
 		
+		
+		String key = "";
+		String url = "";
+		
+		if(args[0].startsWith("'")){
+			String completeArgs = "";
+			Iterator<String> it = Arrays.asList(args).iterator();
+			while(it.hasNext()){
+				completeArgs += it.next() + (it.hasNext() ? " " : "");
+			}
+			
+			Pattern pattern = Pattern.compile("\\'(.*?)\\'");
+			Matcher matcher = pattern.matcher(completeArgs);
+			matcher.find();
+			
+			if(matcher.groupCount() > 0){
+				key = matcher.group(1);
+				key = key.replace(" ", " ");
+			}
+			
+			try{
+				url = completeArgs.split(key.replace(" ", " "))[1].substring(1);
+			}catch(IndexOutOfBoundsException exp){}
+		}
+		
 		if(args.length == 1){
-			String url = plugin.getLinkController().getURLOfLink(args[0]);
+			key = args[0];
+			url = "";
+		}
+				
+		
+		if(!"".equals(key) && "".equals(url)){
+			url = plugin.getLinkController().getURLOfLink(key);
 			if(url == ""){
-				player.sendMessage(ChatColor.RED + args[0] + " not found.");
+				player.sendMessage(ChatColor.RED + key + " not found.");
 				return true;
 			}
-			plugin.getLinkController().addPlayerSelection(player, args[0], url);
+			plugin.getLinkController().addPlayerSelection(player, key, url);
 			String replaceString = plugin.interactConfig().getconfig_replaceID();
 			player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with '" + replaceString + 
 					"' in first line) to save the link to this sign.");
@@ -53,32 +94,83 @@ public class CommandExecutor_LinkSign implements CommandExecutor {
 			return true;
 		}
 	
-		String url = args[args.length -1];
-		String recogString = args[0];
-		boolean isShortened = plugin.interactConfig().isconfig_useTinyUrlShortener();
-		
-		if(isShortened){
-			url = TinyUrlShortener.shortenURL(url);
-		}
-		
-		if(args.length >= 2){
-			recogString = "";
-			for(int i = 0; i < args.length - 1; i++){
-				recogString += args[i] + " ";
-			}
-			recogString = recogString.substring(0, recogString.length()-1);
-			
-			if(recogString == ""){
-				player.sendMessage(ChatColor.RED + args[0] + " No valid recognization String.");
-				return true;
-			}
-			
-			plugin.getLinkController().addPlayerSelection(player, recogString, url);
-			player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with 'newurl' in first line) to save the link to this sign.");
+		//here key == "" is always true.
+		//we always need key + url here.
+		if(args.length < 2){
+			player.sendMessage(ChatColor.RED + "Wrong usage: /linksign <keyword> [URL]");
+			player.sendMessage(ChatColor.RED + "Or: /linksign <'key words'> [URL]");
 			return true;
 		}
 		
-		return false;
+		url = args[args.length -1];
+		
+		if("".equals(key)){
+			key = args[0];
+		}
+		
+		boolean isShortened = plugin.interactConfig().isconfig_useTinyUrlShortener();
+		if("lsigns".equals(label)){
+			isShortened = true;
+		}
+		if("lsignns".equals(label)){
+			isShortened = false;
+		}
+		
+		
+		if(args.length >= 2){
+			key = "";
+			for(int i = 0; i < args.length - 1; i++){
+				key += args[i] + " ";
+			}
+			key = key.substring(0, key.length() - 1);
+			
+			if(key == ""){
+				player.sendMessage(ChatColor.RED + key + " No valid recognization String.");
+				return true;
+			}
+			
+			if(isShortened){
+				sender.sendMessage(ChatColor.GREEN + "Shortening... This can take a while.");
+				SetUrlAsync asyncTask = new SetUrlAsync(player, url, key);
+				Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, asyncTask, 1);
+			}else{
+				post(player, url, key);
+			}
+		}
+			
+		return true;
+	}
+	
+	private void post(Player player, String url, String recogString){			
+		plugin.getLinkController().addPlayerSelection(player, recogString, url);
+		player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with 'newurl' in first line) to save the link to this sign.");
+	}
+	
+	private class SetUrlAsync implements Runnable{
+
+		private final Player player;
+		private String url;
+		private String recogString;
+		
+		public SetUrlAsync(Player player, String url, String recogString) {
+			this.player = player;
+			this.url = url;
+			this.recogString = recogString;
+		}
+		
+		@Override
+		public void run() {
+			try{
+				url = TinyUrlShortener.shortenURL(url);
+			}catch(Exception exp){
+				player.sendMessage(ChatColor.RED + "Error while connecting to tiny URL. Using normal URL");
+				plugin.getDebugLogger().logError("Error on link shortening");
+				plugin.getDebugLogger().logStackTrace(exp);
+			}
+			
+			post(player, url, recogString);
+		}
+		
 	}
 
 }

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,12 +14,13 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.linksonsigns.LinksOnSigns;
 import de.tobiyas.linksonsigns.spamfilter.SpamController;
+import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class LinkController {
 
-	private ArrayList<LinkContainer> linkContainer;
-	private ArrayList<LinkPlayerReplacer> playerReplacer;
-	private YamlConfiguration config;
+	private List<LinkContainer> linkContainer;
+	private List<LinkPlayerReplacer> playerReplacer;
+	private YAMLConfigExtended config;
 	private String savePath;
 	private SpamController spamController;
 	
@@ -25,28 +28,41 @@ public class LinkController {
 	
 	public LinkController(){
 		plugin = LinksOnSigns.getPlugin();
-		linkContainer = initLinkContainer();
+		linkContainer = new LinkedList<LinkContainer>();
 		playerReplacer = new ArrayList<LinkPlayerReplacer>();
 		spamController = new SpamController();
 	}
 	
-	private ArrayList<LinkContainer> initLinkContainer(){
+	public void reload(){
+		linkContainer = initLinkContainer();
+	}
+	
+	private List<LinkContainer> initLinkContainer(){
 		savePath = plugin.getDataFolder() + File.separator + "links.yml";
 		
 		initStructure(savePath);
-		ArrayList<LinkContainer> container = new ArrayList<LinkContainer>();
+		List<LinkContainer> container = new ArrayList<LinkContainer>();
 		
-		config = new YamlConfiguration();
-		
-		try{
-			config.load(savePath);
-		}catch(Exception e){
+		config = new YAMLConfigExtended(savePath).load();
+
+		if(!config.getValidLoad()){
+			plugin.log("Error on reading links.yml");
+			return container;
 		}
 		
 		Set<String> linkNames = getYAMLChildren(config, "links");
 		
 		for(String linkName : linkNames){
-			String url = config.getString("links." + linkName);
+			String path = "links." + linkName;
+			
+			if(!config.isString(path)){
+				continue;
+			}
+			
+			
+			String url = config.getString(path);
+			linkName.replace("'", "");
+			
 			container.add(new LinkContainer(linkName, url));
 		}
 		
@@ -90,14 +106,21 @@ public class LinkController {
 	}
 	
 	public String getURLOfLink(String linkName){
+		String unconvertedLinke = linkName;
+		linkName = linkName.replaceAll("§", "&");
 		
 		for(LinkContainer container : linkContainer){
-			if(container.getLinkName().equals(linkName))
+			if(container.getLinkName().equals(linkName)){
 				return container.getURL();
+			}
+			if(container.getLinkName().equals(unconvertedLinke)){
+				return container.getURL();
+			}
 		}
 		
 		return "";
 	}
+	
 	
 	public void addPlayerSelection(Player player, String linkName, String url){
 		for(LinkPlayerReplacer replacer : playerReplacer){
@@ -131,10 +154,11 @@ public class LinkController {
 	}
 	
 	public void addLinkContainer(String linkName, String URL){
+		config.load();
+		
 		config.set("links." + linkName, URL);
-		try {
-			config.save(savePath);
-		} catch (IOException e) {
+		
+		if(!config.save()){
 			plugin.log("saving Links failed.");
 		}
 		

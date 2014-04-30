@@ -1,6 +1,6 @@
 name: LinksOnSigns
 main: de.tobiyas.linksonsigns.LinksOnSigns
-version: 1.6
+version: 1.9
 website: http://dev.bukkit.org/server-mods/linksonsigns/
 author: tobiyas
 description: >
@@ -9,6 +9,11 @@ description: >
 commands:
   linksign:
     description: links a sign to an URL
-    aliases: [lsign]
+    aliases: [lsign,lsigns,lsignns]
     usage: |
            /linksign <link-name> [URL]
+  linksonsignsreload:
+    description: reloading all urls in file
+    aliases: [lsr]
+    usage: |
+           /linksonsignsreload

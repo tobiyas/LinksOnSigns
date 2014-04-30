@@ -13,15 +13,15 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener; 
-import org.bukkit.event.EventHandler; 
-
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import de.tobiyas.linksonsigns.LinksOnSigns;
 import de.tobiyas.linksonsigns.linkcontainer.LinkPlayerReplacer;
 import de.tobiyas.linksonsigns.permissions.PermissionNode;
+import de.tobiyas.util.chat.JSONRawSender;
 
 
 public class Listener_Player implements Listener {
@@ -66,8 +66,35 @@ public class Listener_Player implements Listener {
 		String url = getUrlFromSign(sign);
 		if(url.equals("")) return;
 		
-		event.getPlayer().sendMessage(ChatColor.BLUE + "" + ChatColor.UNDERLINE + url);
-		event.getPlayer().sendMessage(plugin.interactConfig().getconfig_displayTriggerMessage());
+		String linkFormat = plugin.interactConfig().getConfig_linkFormat();
+		linkFormat = ChatColor.translateAlternateColorCodes('&', linkFormat);
+		
+		String messageAfterLink = plugin.interactConfig().getconfig_displayTriggerMessage();
+		messageAfterLink = ChatColor.translateAlternateColorCodes('&', messageAfterLink);
+		
+		
+		if(plugin.interactConfig().isConfig_useJSONRawSend()){
+			String[] split = linkFormat.split("%LINK%");
+			String label = sign.getLine(1) + sign.getLine(2);
+			
+			JSONRawSender sender = new JSONRawSender();
+			sender.append(split[0])
+			.appendURL(url, ChatColor.UNDERLINE + "" + ChatColor.BLUE + ChatColor.translateAlternateColorCodes('&', label));
+			if(split.length > 1) sender.append(split[1]);
+			
+			sender.sendToPlayers(player);
+			
+			if(!"".equals(messageAfterLink)){
+				player.sendMessage(messageAfterLink);
+			}
+		}else{
+			linkFormat = linkFormat.replaceAll("%LINK%", url);
+			player.sendMessage(linkFormat);
+			
+			if(!"".equals(messageAfterLink)){
+				player.sendMessage(messageAfterLink);
+			}			
+		}
 		
 		plugin.getLinkController().getSpamController().addToSpamList(player);
 	}
@@ -109,7 +136,13 @@ public class Listener_Player implements Listener {
 	}
 	
 	private boolean isFreeLinkSign(Sign sign){
-		return sign.getLine(0).toLowerCase().contains(plugin.interactConfig().getconfig_replaceID());
+		for(int i = 0; i < 4; i++){
+			if(sign.getLine(i).toLowerCase().equalsIgnoreCase(plugin.interactConfig().getconfig_replaceID())){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 

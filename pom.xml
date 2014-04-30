@@ -1,15 +1,40 @@
+<!--
+  Redistribution and use of the MineAreaLevels code or any derivative works are permitted provided that the following conditions are met:
+  
+  - Redistributions may not be sold, nor may they be used in a commercial product or activity.
+  
+  - Redistributions that are modified from the original source must include the complete source code, including the source code for all components used by a binary built from the modified sources.  
+  
+  - However, as a special exception, the source code distributed need not include anything that is normally distributed (in either source or binary form) with the major components (compiler, kernel, and so on) of the operating system on which the executable runs, unless that component itself accompanies the executable.
+  
+  - Redistributions must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
-	<artifactId>linksonsigns</artifactId>
-	<version>1.6.0-SNAPSHOT</version>
+	<artifactId>LinksOnSigns</artifactId>
+	<version>1.9</version>
 	<name>LinksOnSigns</name>
 
+	<properties>
+	    <cbVersion>1.7.9-R0.1-SNAPSHOT</cbVersion>
+	    <utilsVersion>1.0.11</utilsVersion>
+	    <utilsAddition>los</utilsAddition>
+	</properties>
+	
+	
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
 			<url>http://repo.bukkit.org/content/groups/public</url>
+		</repository>
+		
+		<repository>
+			<id>sk89q</id>
+			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
 
@@ -17,28 +42,37 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.4.6-R0.2-SNAPSHOT</version>
+			<version>${cbVersion}</version>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- Workspace Dependency -->
+		
 		<dependency>
 			<groupId>de.tobiyas</groupId>
 			<artifactId>Utils</artifactId>
-			<version>1.0.6-SNAPSHOT</version>
+			<version>${utilsVersion}</version>
 		</dependency>
+		
 	</dependencies>
 
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			
 			<!-- We want to bundle in some dependencies -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.4</version>
+				<version>2.2</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -51,19 +85,17 @@
 									<include>de.tobiyas:Utils</include>
 								</includes>
 							</artifactSet>
+							
+							<!-- We want to relocate the Utils -->
+							<relocations>
+								<relocation>
+									<pattern>de.tobiyas.util</pattern>
+									<shadedPattern>de.tobiyas.util.v${utilsVersion}.${utilsAddition}</shadedPattern>
+								</relocation>
+							</relocations>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
 			</plugin>
 		</plugins>
 

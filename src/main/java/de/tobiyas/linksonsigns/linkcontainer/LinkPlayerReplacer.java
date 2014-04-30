@@ -54,16 +54,25 @@ public class LinkPlayerReplacer {
 			plugin.getLinkController().addLinkContainer(linkName, url);
 		}
 		
-		sign.setLine(0, plugin.interactConfig().getconfig_line0());
-		sign.setLine(3, plugin.interactConfig().getconfig_line3());
+		String line0 = plugin.interactConfig().getconfig_line0();
+		String line3 = plugin.interactConfig().getconfig_line3();
 		
-		int stringLength = linkName.length();
+		line0 = ChatColor.translateAlternateColorCodes('&', line0);
+		line3 = ChatColor.translateAlternateColorCodes('&', line3);
+		
+		sign.setLine(0, line0);
+		sign.setLine(3, line3);
+		
+		String copiedLinkName = linkName;
+		copiedLinkName = ChatColor.translateAlternateColorCodes('&', copiedLinkName);
+		
+		int stringLength = copiedLinkName.length();
 		
 		if(stringLength > 15){
-			sign.setLine(1, linkName.substring(0, 15));
-			sign.setLine(2, linkName.substring(15, stringLength));
+			sign.setLine(1, copiedLinkName.substring(0, 15));
+			sign.setLine(2, copiedLinkName.substring(15, stringLength));
 		}else{
-			sign.setLine(1, linkName);
+			sign.setLine(1, copiedLinkName);
 			sign.setLine(2, "");
 		}
 		

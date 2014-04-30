@@ -28,6 +28,11 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 
 	private boolean config_uploadErrorStackTraces;
 	
+	private String config_linkFormat;
+	
+	private boolean config_useJSONRawSend;
+	
+	private boolean config_enableMetrics;
 	
 
 	public Config(){
@@ -47,8 +52,12 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		config.addDefault("useTinyUrlShortener", false);
 		
 		config.addDefault("alsoTriggerOnPunch", true);
+		config.addDefault("linkFormat", "&3URL: %LINK%");
+
+		config.addDefault("useJSONRawSend", false);
 
 		config.addDefault("uploadErrorStackTraces", false);
+		config.addDefault("enableMetrics", true);
 		
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -56,7 +65,7 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 	}
 	
 	
-	private void reloadConfiguration(){
+	public void reloadConfiguration(){
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 
@@ -67,6 +76,9 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		config_useTinyUrlShortener = config.getBoolean("useTinyUrlShortener", false);
 		config_displayTriggerMessage = config.getString("displayTriggerMessage", "&5Please click the link above.");
 		config_uploadErrorStackTraces = config.getBoolean("uploadErrorStackTraces", false);
+		config_linkFormat = config.getString("linkFormat", "&3URL: %LINK%");
+		config_useJSONRawSend = config.getBoolean("useJSONRawSend", false);
+		config_enableMetrics = config.getBoolean("enableMetrics", true);
 	}
 	
 	private String decodeColor(String message){
@@ -101,4 +113,18 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 	public boolean isconfig_uploadErrorStackTraces(){
 		return config_uploadErrorStackTraces;
 	}
+
+	public String getConfig_linkFormat() {
+		return config_linkFormat;
+	}
+
+	public boolean isConfig_useJSONRawSend() {
+		return config_useJSONRawSend;
+	}
+
+	public boolean isConfig_enableMetrics() {
+		return config_enableMetrics;
+	}
+	
+	
 }

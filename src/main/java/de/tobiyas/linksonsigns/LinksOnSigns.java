@@ -9,19 +9,20 @@ package de.tobiyas.linksonsigns;
 
 
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import de.tobiyas.linksonsigns.commands.CommandExecutor_LinkSign;
+import de.tobiyas.linksonsigns.commands.CommandExecutor_Reload;
 import de.tobiyas.linksonsigns.configuration.Config;
 import de.tobiyas.linksonsigns.linkcontainer.LinkController;
 import de.tobiyas.linksonsigns.listeners.Listener_Block;
 import de.tobiyas.linksonsigns.listeners.Listener_Player;
+import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
-public class LinksOnSigns extends JavaPlugin{
+public class LinksOnSigns extends UtilsUsingPlugin{
 	private DebugLogger debugLogger;
 	
 	private PluginDescriptionFile description;
@@ -49,6 +50,8 @@ public class LinksOnSigns extends JavaPlugin{
 		linkController = new LinkController();
 		permissionManager = new PermissionManager(this);
 		
+		linkController.reload();
+
 		config = new Config();
 
 		boolean enableUploads = config.isconfig_uploadErrorStackTraces();
@@ -57,22 +60,17 @@ public class LinksOnSigns extends JavaPlugin{
 		registerEvents();
 		registerCommands();
 		
-		initMetrics();
+		//enable Metrics, if enabled in config.
+		if(config.isConfig_enableMetrics()) initMetrics();
 	}
 	
 	@Override
 	public void onDisable(){
 		log("disabled "+description.getFullName());
-
 	}
 	
 	public void log(String message){
 		debugLogger.log(prefix+message);
-	}
-	
-	public void logStacktrace(Exception exp, String message){
-		debugLogger.logError(message);
-		debugLogger.logStackTrace(exp);
 	}
 	
 	private void initMetrics(){
@@ -87,6 +85,7 @@ public class LinksOnSigns extends JavaPlugin{
 	
 	private void registerCommands(){
 		new CommandExecutor_LinkSign();
+		new CommandExecutor_Reload();
 	}
 
 
@@ -104,6 +103,11 @@ public class LinksOnSigns extends JavaPlugin{
 	
 	public Config interactConfig(){
 		return config;
+	}
+
+	@Override
+	public DebugLogger getDebugLogger() {
+		return debugLogger;
 	}
 
 }

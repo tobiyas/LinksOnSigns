@@ -8,11 +8,9 @@
 package de.tobiyas.linksonsigns.listeners;
 
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener; 
-import org.bukkit.event.EventHandler; 
-
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
 import de.tobiyas.linksonsigns.LinksOnSigns;
@@ -32,7 +30,6 @@ public class Listener_Block implements Listener {
 		if(!checkIfLinkSign(event.getLine(0))) return;
 		Player player = event.getPlayer();
 		if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.create.getNode())){
-			player.sendMessage(ChatColor.RED + "You dont have Permission.");
 			event.setCancelled(true);
 			return;
 		}
