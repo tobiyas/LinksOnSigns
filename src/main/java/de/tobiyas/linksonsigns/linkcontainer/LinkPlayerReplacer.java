@@ -12,7 +12,7 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 public class LinkPlayerReplacer {
 
 	private String linkName;
-	private String url;
+	private LinkContainer url;
 	private Player player;
 	
 	private LinksOnSigns plugin;
@@ -25,14 +25,14 @@ public class LinkPlayerReplacer {
 		plugin = LinksOnSigns.getPlugin();
 	}
 	
-	public LinkPlayerReplacer(Player player, String linkName, String url){
+	public LinkPlayerReplacer(Player player, String linkName, LinkContainer url){
 		this.linkName = linkName;
 		this.url = url;
 		this.player = player;
 		plugin = LinksOnSigns.getPlugin();
 	}
 	
-	private String getUrlFromFile(String linkName){
+	private LinkContainer getUrlFromFile(String linkName){
 		return plugin.getLinkController().getURLOfLink(linkName);
 	}
 	
@@ -50,8 +50,8 @@ public class LinkPlayerReplacer {
 		
 		Sign sign = (Sign) location.getBlock().getState();
 		
-		if(plugin.getLinkController().getURLOfLink(linkName) == ""){
-			plugin.getLinkController().addLinkContainer(linkName, url);
+		if(plugin.getLinkController().getURLOfLink(linkName) == null){
+			plugin.getLinkController().addLinkContainer(url);
 		}
 		
 		String line0 = plugin.interactConfig().getconfig_line0();

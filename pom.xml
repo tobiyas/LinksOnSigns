@@ -20,7 +20,7 @@
 	<name>LinksOnSigns</name>
 
 	<properties>
-	    <cbVersion>1.7.9-R0.1-SNAPSHOT</cbVersion>
+	    <cbVersion>1.7.10-R0.1-SNAPSHOT</cbVersion>
 	    <utilsVersion>1.0.11</utilsVersion>
 	    <utilsAddition>los</utilsAddition>
 	</properties>

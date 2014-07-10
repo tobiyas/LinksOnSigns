@@ -63,7 +63,7 @@ public class LinkController {
 			String url = config.getString(path);
 			linkName.replace("'", "");
 			
-			container.add(new LinkContainer(linkName, url));
+			container.add(new LinkContainer(linkName, url, null));
 		}
 		
 		return container;
@@ -105,20 +105,20 @@ public class LinkController {
 		}
 	}
 	
-	public String getURLOfLink(String linkName){
-		String unconvertedLinke = linkName;
-		linkName = linkName.replaceAll("§", "&");
+	public LinkContainer getURLOfLink(String linkName){
+		String unconvertedLink = linkName;
+		linkName = linkName.replaceAll('\u00A7' + "", "&");
 		
 		for(LinkContainer container : linkContainer){
 			if(container.getLinkName().equals(linkName)){
-				return container.getURL();
+				return container;
 			}
-			if(container.getLinkName().equals(unconvertedLinke)){
-				return container.getURL();
+			if(container.getLinkName().equals(unconvertedLink)){
+				return container;
 			}
 		}
 		
-		return "";
+		return null;
 	}
 	
 	
@@ -130,7 +130,10 @@ public class LinkController {
 			}
 		}
 		
-		playerReplacer.add(new LinkPlayerReplacer(player, linkName, url));
+		LinkContainer container = getURLOfLink(linkName);
+		if(container == null) container = new LinkContainer(linkName, url, null);
+		
+		playerReplacer.add(new LinkPlayerReplacer(player, linkName, container));
 	}
 	
 	public void addPlayerSelection(Player player, String linkName){
@@ -162,7 +165,7 @@ public class LinkController {
 			plugin.log("saving Links failed.");
 		}
 		
-		linkContainer.add(new LinkContainer(linkName, URL));
+		linkContainer.add(new LinkContainer(linkName, URL, null));
 	}
 	
 	public LinkPlayerReplacer getPlayerSelection(Player player){
@@ -174,5 +177,9 @@ public class LinkController {
 	
 	public SpamController getSpamController(){
 		return spamController;
+	}
+
+	public void addLinkContainer(LinkContainer container) {
+		this.linkContainer.add(container);
 	}
 }

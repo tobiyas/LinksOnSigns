@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.linksonsigns.LinksOnSigns;
+import de.tobiyas.linksonsigns.linkcontainer.LinkContainer;
 import de.tobiyas.linksonsigns.permissions.PermissionNode;
 import de.tobiyas.linksonsigns.shortener.TinyUrlShortener;
 
@@ -81,11 +82,12 @@ public class CommandExecutor_LinkSign implements CommandExecutor {
 				
 		
 		if(!"".equals(key) && "".equals(url)){
-			url = plugin.getLinkController().getURLOfLink(key);
-			if(url == ""){
+			LinkContainer container = plugin.getLinkController().getURLOfLink(key);
+			if(container == null){
 				player.sendMessage(ChatColor.RED + key + " not found.");
 				return true;
 			}
+			
 			plugin.getLinkController().addPlayerSelection(player, key, url);
 			String replaceString = plugin.interactConfig().getconfig_replaceID();
 			player.sendMessage(ChatColor.GREEN + "Punch on a free Link-Sign (sign with '" + replaceString + 

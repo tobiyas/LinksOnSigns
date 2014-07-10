@@ -8,7 +8,8 @@
  package de.tobiyas.linksonsigns.configuration;
 
  
- import org.bukkit.configuration.file.FileConfiguration;
+ import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import de.tobiyas.linksonsigns.LinksOnSigns;
 
@@ -81,17 +82,12 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 		config_enableMetrics = config.getBoolean("enableMetrics", true);
 	}
 	
-	private String decodeColor(String message){
-		return message.replaceAll("(&([a-f0-9]))", "§$2");
-	}
-	
-	
 	public String getconfig_line0(){
-		return decodeColor(config_line0);
+		return ChatColor.translateAlternateColorCodes('&',config_line0);
 	}
 	
 	public String getconfig_line3(){
-		return decodeColor(config_line3);
+		return ChatColor.translateAlternateColorCodes('&',config_line3);
 	}
 	
 	public String getconfig_replaceID(){
@@ -103,7 +99,7 @@ import de.tobiyas.linksonsigns.LinksOnSigns;
 	}
 	
 	public String getconfig_displayTriggerMessage(){
-		return decodeColor(config_displayTriggerMessage);
+		return ChatColor.translateAlternateColorCodes('&',config_displayTriggerMessage);
 	}
 
 	public boolean isconfig_useTinyUrlShortener() {
